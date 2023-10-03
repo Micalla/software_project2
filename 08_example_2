@@ -1,0 +1,43 @@
+void loop() {
+  float distance;
+
+  // wait until next sampling time.
+  if (millis() < (last_sampling_time + INTERVAL))
+    return;
+
+  distance = USS_measure(PIN_TRIG, PIN_ECHO); // read distance
+
+  if ((distance == 0.0) || (distance > _DIST_MAX)) {
+      distance = _DIST_MAX + 10.0;    // Set Higher Value
+      analogWrite(PIN_LED, 0);       // LED OFF
+  } else if (distance < _DIST_MIN) {
+      distance = _DIST_MIN - 10.0;    // Set Lower Value
+      analogWrite(PIN_LED, 0);       // LED OFF
+  } else if (distance >= 100.0 && distance <= 125.0) {
+    analogWrite(PIN_LED, 63); 
+  } else if (distance > 125.0 && distance <= 150.0) {
+    analogWrite(PIN_LED, 127);
+  } else if (distance > 150.0 && distance <= 175.0) {
+    analogWrite(PIN_LED, 191); 
+  } else if (distance >= 175.0 && distance <= 225.0) {  // Modified this line
+    analogWrite(PIN_LED, 255); 
+  } else if (distance > 225.0 && distance <= 250.0) {
+    analogWrite(PIN_LED, 191);
+  } else if (distance > 250.0 && distance <= 275.0) {
+    analogWrite(PIN_LED, 127); 
+  } else if (distance > 275.0 && distance <= 300.0) {
+    analogWrite(PIN_LED, 63); 
+  }
+
+  // output the distance to the serial port
+  Serial.print("Min:");        Serial.print(_DIST_MIN);
+  Serial.print(",distance:");  Serial.print(distance);
+  Serial.print(",Max:");       Serial.print(_DIST_MAX);
+  Serial.println("");
+
+  // do something here
+  delay(50); // Assume that it takes 50ms to do something.
+
+  // update last sampling time
+  last_sampling_time += INTERVAL;
+}
